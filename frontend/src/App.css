@@ -1,38 +1,188 @@
-.App {
-  text-align: center;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f7ee;
+  color: #2d3a2e;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+.app {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
   min-height: 100vh;
+}
+
+/* LANDING */
+.hero {
+  text-align: center;
+  padding: 60px 20px 40px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  color: #2d6a4f;
+  margin-bottom: 10px;
+}
+
+.tagline {
+  font-size: 1.3rem;
+  color: #52b788;
+  margin-bottom: 15px;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.feature-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.feature-card span {
+  display: block;
+  font-weight: bold;
+  color: #2d6a4f;
+  margin: 8px 0 5px;
+}
+
+.feature-card p {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* FORM */
+.form-page, .advice-page {
+  padding: 20px 0;
+}
+
+.form-page h2, .advice-page h2 {
+  color: #2d6a4f;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.section h3 {
+  color: #52b788;
+  margin-bottom: 15px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+label {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #444;
+  gap: 6px;
+}
+
+input, select {
+  padding: 10px;
+  border: 1.5px solid #d8e8d8;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border 0.2s;
+}
+
+input:focus, select:focus {
+  border-color: #52b788;
+}
+
+/* BUTTONS */
+.btn-primary {
+  background: #2d6a4f;
   color: white;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  transition: background 0.2s;
 }
 
-.App-link {
-  color: #61dafb;
+.btn-primary:hover { background: #1b4332; }
+.btn-primary:disabled { background: #95c4a8; cursor: not-allowed; }
+
+.btn-secondary {
+  background: white;
+  color: #2d6a4f;
+  border: 2px solid #2d6a4f;
+  padding: 12px 30px;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* ADVICE */
+.sensor-card {
+  background: #1b4332;
+  color: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.sensor-card h3 { margin-bottom: 15px; }
+
+.sensor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.sensor-item {
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sensor-item span {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #52b788;
+}
+
+.advice-box {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  line-height: 1.8;
+  white-space: pre-wrap;
 }
