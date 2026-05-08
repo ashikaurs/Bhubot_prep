@@ -271,92 +271,135 @@ Rules:
 
 
 
-    ocr_result = ocr_response.json()
+#     ocr_result = ocr_response.json()
 
-    print("Full OCR response:", ocr_result)  # add this
+#     print("Full OCR response:", ocr_result)  # add this
 
-# check for errors properly
-    if "ParsedResults" not in ocr_result:
-        error_msg = ocr_result.get("ErrorMessage", "Unknown error")
-        print("OCR Error:", error_msg)
-        return jsonify({"error": f"OCR service error: {error_msg}"}), 500
+# # check for errors properly
+#     if "ParsedResults" not in ocr_result:
+#         error_msg = ocr_result.get("ErrorMessage", "Unknown error")
+#         print("OCR Error:", error_msg)
+#         return jsonify({"error": f"OCR service error: {error_msg}"}), 500
 
-    if ocr_result.get("IsErroredOnProcessing"):
-        return jsonify({"error": "OCR failed processing"}), 500
+#     if ocr_result.get("IsErroredOnProcessing"):
+#         return jsonify({"error": "OCR failed processing"}), 500
 
 
-    extracted_text = ocr_result["ParsedResults"][0]["ParsedText"]
-    print("OCR extracted text:", extracted_text)
+#     extracted_text = ocr_result["ParsedResults"][0]["ParsedText"]
+#     print("OCR extracted text:", extracted_text)
 
-    # Now use Groq to parse the extracted text into soil parameters
-    parse_prompt = f"""
-You are a soil health card reader for Indian government soil health cards.
-Extract soil parameters from this text and return ONLY a JSON object.
-No explanation, no markdown, no extra text — just the JSON.
+#     # Now use Groq to parse the extracted text into soil parameters
+#     parse_prompt = f"""
+# You are a soil health card reader for Indian government soil health cards.
+# Extract soil parameters from this text and return ONLY a JSON object.
+# No explanation, no markdown, no extra text — just the JSON.
 
-Extracted text from soil card:
-{extracted_text}
+# Extracted text from soil card:
+# {extracted_text}
 
-Return ONLY this JSON format:
-{{
-    "ph": 6.5,
-    "nitrogen": "Low",
-    "phosphorus": "Medium", 
-    "potassium": "High",
-    "organic_carbon": 0.5,
-    "sulphur": "Low",
-    "zinc": "Low",
-    "iron": "Medium",
-    "manganese": "Medium",
-    "copper": "Medium",
-    "boron": "Low",
-    "ec": 0.4
-}}
+# Return ONLY this JSON format:
+# {{
+#     "ph": 6.5,
+#     "nitrogen": "Low",
+#     "phosphorus": "Medium", 
+#     "potassium": "High",
+#     "organic_carbon": 0.5,
+#     "sulphur": "Low",
+#     "zinc": "Low",
+#     "iron": "Medium",
+#     "manganese": "Medium",
+#     "copper": "Medium",
+#     "boron": "Low",
+#     "ec": 0.4
+# }}
 
-Rules:
-- ph and organic_carbon and ec must be numbers
-- nitrogen, phosphorus, potassium, sulphur, zinc, iron, manganese, copper, boron must be "Low", "Medium", or "High"
-- If a value is not found in the text, use these defaults: ph=6.5, nitrogen="Medium", phosphorus="Medium", potassium="Medium", organic_carbon=0.5, sulphur="Medium", zinc="Medium", iron="Medium", manganese="Medium", copper="Medium", boron="Medium", ec=0.4
-- Return ONLY the JSON, nothing else
+# Rules:
+# - ph and organic_carbon and ec must be numbers
+# - nitrogen, phosphorus, potassium, sulphur, zinc, iron, manganese, copper, boron must be "Low", "Medium", or "High"
+# - If a value is not found in the text, use these defaults: ph=6.5, nitrogen="Medium", phosphorus="Medium", potassium="Medium", organic_carbon=0.5, sulphur="Medium", zinc="Medium", iron="Medium", manganese="Medium", copper="Medium", boron="Medium", ec=0.4
+# - Return ONLY the JSON, nothing else
+# """
+
+#     parse_response = client.chat.completions.create(
+#         model="llama-3.3-70b-versatile",
+#         messages=[{"role": "user", "content": parse_prompt}],
+#         max_tokens=500
+#     )
+
+#     import json
+#     raw = parse_response.choices[0].message.content.strip()
+
+#     # clean up any markdown if AI adds it
+#     raw = raw.replace("```json", "").replace("```", "").strip()
+
+#     try:
+#         soil_params = json.loads(raw)
+#         return jsonify({
+#             "success": True,
+#             "soil_params": soil_params,
+#             "extracted_text": extracted_text
+#         })
+#     except:
+#         return jsonify({"error": "Could not parse soil parameters", "raw": raw}), 500
+    
+
+
+
+
+
+
+@app.route("/api/chatbot", methods=["POST"])
+def chatbot():
+    data = request.json
+    user_message = data.get("message", "")
+    chat_history = data.get("history", [])
+    farm_context = data.get("farm_context", {})
+
+    context_str = ""
+    if farm_context:
+        context_str = f"""
+Current farm context:
+- Crop: {farm_context.get('crop', 'Not specified')}
+- Location: {farm_context.get('location', 'Not specified')}
+- Season: {farm_context.get('season', 'Not specified')}
+- Land Size: {farm_context.get('land_size', 'Not specified')}
+- Budget: {farm_context.get('budget', 'Not specified')}
+- Soil pH: {farm_context.get('ph', 'Not specified')}
+- Nitrogen: {farm_context.get('nitrogen', 'Not specified')}
+- Phosphorus: {farm_context.get('phosphorus', 'Not specified')}
+- Potassium: {farm_context.get('potassium', 'Not specified')}
 """
 
-    parse_response = client.chat.completions.create(
+    system_prompt = f"""You are BhuBot, a friendly and expert agricultural advisor for Indian farmers.
+Answer farming questions clearly and practically. Focus on Indian farming conditions, locally available products, and affordable solutions.
+Keep answers concise (3-5 sentences). Use simple language.
+{f"Use this farm context when relevant: {context_str}" if context_str else ""}
+If asked in another language, respond in that language."""
+
+    messages = [{"role": "system", "content": system_prompt}]
+    for msg in chat_history[-6:]:  # keep last 6 messages for context
+        messages.append({"role": msg["role"], "content": msg["content"]})
+    messages.append({"role": "user", "content": user_message})
+
+    response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
-        messages=[{"role": "user", "content": parse_prompt}],
-        max_tokens=500
+        messages=messages,
+        max_tokens=400
     )
 
-    import json
-    raw = parse_response.choices[0].message.content.strip()
+    reply = response.choices[0].message.content
+    return jsonify({"reply": reply})
 
-    # clean up any markdown if AI adds it
-    raw = raw.replace("```json", "").replace("```", "").strip()
 
-    try:
-        soil_params = json.loads(raw)
-        return jsonify({
-            "success": True,
-            "soil_params": soil_params,
-            "extracted_text": extracted_text
-        })
-    except:
-        return jsonify({"error": "Could not parse soil parameters", "raw": raw}), 500
-    
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-

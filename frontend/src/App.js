@@ -3,6 +3,86 @@ import axios from 'axios';
 import './App.css';
 
 
+import ReactDOM from 'react-dom';
+
+
+function Chatbot({ farmContext }) {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { role: 'assistant', content: '👋 Hi! I\'m BhuBot. Ask me anything about farming, fertilizers, or your crops!' }
+  ]);
+  const [input, setInput] = useState('');
+  const [thinking, setThinking] = useState(false);
+  const bottomRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, open]);
+
+  const sendMessage = async () => {
+    if (!input.trim() || thinking) return;
+    const userMsg = { role: 'user', content: input };
+    const updatedHistory = [...messages, userMsg];
+    setMessages(updatedHistory);
+    setInput('');
+    setThinking(true);
+
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/api/chatbot', {
+        message: input,
+        history: messages,
+        farm_context: farmContext
+      });
+      setMessages([...updatedHistory, { role: 'assistant', content: response.data.reply }]);
+    } catch {
+      setMessages([...updatedHistory, { role: 'assistant', content: '⚠️ Sorry, I couldn\'t connect. Please try again.' }]);
+    }
+    setThinking(false);
+  };
+
+  // ✅ Only this return block changed — everything above is identical to your original
+  return ReactDOM.createPortal(
+    <>
+      <button className="chat-fab" onClick={() => setOpen(!open)}>
+        {open ? '✕' : '💬'}
+      </button>
+
+      {open && (
+        <div className="chat-window">
+          <div className="chat-header">
+            <span>🌱 BhuBot Assistant</span>
+            <button onClick={() => setOpen(false)}>✕</button>
+          </div>
+          <div className="chat-messages">
+            {messages.map((msg, i) => (
+              <div key={i} className={`chat-bubble ${msg.role}`}>
+                {msg.content}
+              </div>
+            ))}
+            {thinking && <div className="chat-bubble assistant">🌿 Thinking...</div>}
+            <div ref={bottomRef} />
+          </div>
+          <div className="chat-input-row">
+            <input
+              className="chat-input"
+              placeholder="Ask about fertilizers, pests, irrigation..."
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && sendMessage()}
+            />
+            <button className="chat-send" onClick={sendMessage}>➤</button>
+          </div>
+        </div>
+      )}
+    </>,
+    document.body  // ✅ This is the key line
+  );
+}
+
+
+
+
+
 function SoilChart({ soilParams }) {
   const levels = { 'Low': 25, 'Medium': 60, 'High': 90 };
 
@@ -259,6 +339,21 @@ const getAdvice = async () => {
   return (
     <div className="app">
 
+
+
+              <Chatbot
+  farmContext={{
+    ...formData,
+    ph: soilParams.ph,
+    nitrogen: soilParams.nitrogen,
+    phosphorus: soilParams.phosphorus,
+    potassium: soilParams.potassium
+  }}
+/> 
+
+
+
+
       {/* STEP 1 - LANDING */}
       {step === 1 && (
         <div className="landing">
@@ -280,13 +375,6 @@ const getAdvice = async () => {
 
       {/* STEP 2 - FORM */}
       
-
-
-      
-
-    
-
-
 
       {step === 2 && (
         
@@ -316,6 +404,13 @@ const getAdvice = async () => {
               </p>
             )}
           </div>
+
+
+
+           
+
+
+
 
 
           <div className="section">
@@ -477,6 +572,23 @@ const getAdvice = async () => {
 }
 
 export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
