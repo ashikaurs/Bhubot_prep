@@ -481,3 +481,288 @@ input:focus, select:focus {
   font-size: 16px;
 }
 .chat-send:hover { background: #1b4332; }
+
+
+
+
+
+
+
+
+/* AUTH PAGES */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f0f7ee, #e8f5e9);
+  padding: 20px;
+}
+
+.auth-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.auth-header h1 {
+  font-size: 2rem;
+  color: #2d6a4f;
+  margin-bottom: 8px;
+}
+
+.auth-header p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.auth-switch {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 12px;
+}
+
+.auth-switch a {
+  color: #2d6a4f;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+.error-box {
+  background: #fff0f0;
+  border: 1px solid #ffcccc;
+  border-radius: 8px;
+  padding: 12px;
+  color: #cc0000;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.success-box {
+  background: #f0fff4;
+  border: 1px solid #b7e4c7;
+  border-radius: 8px;
+  padding: 12px;
+  color: #2d6a4f;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2d6a4f;
+  padding: 12px 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.navbar-brand {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.navbar-user {
+  color: #b7e4c7;
+  font-size: 0.9rem;
+}
+
+.btn-logout {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.btn-logout:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* CHATBOT */
+.chatbot-section {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.chatbot-section h3 {
+  color: #2d6a4f;
+  margin-bottom: 5px;
+}
+
+.chat-subtitle {
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+}
+
+.chat-messages {
+  min-height: 150px;
+  max-height: 350px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.chat-placeholder {
+  text-align: center;
+  color: #aaa;
+  padding: 30px 0;
+}
+
+.chat-examples {
+  font-size: 0.8rem;
+  margin-top: 8px;
+}
+
+.chat-bubble {
+  margin-bottom: 12px;
+  max-width: 80%;
+}
+
+.user-bubble {
+  margin-left: auto;
+  background: #2d6a4f;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 12px 12px 0 12px;
+}
+
+.bot-bubble {
+  background: white;
+  border: 1px solid #e8f5e9;
+  padding: 10px 14px;
+  border-radius: 12px 12px 12px 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.bot-label {
+  font-size: 0.75rem;
+  color: #52b788;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.chat-bubble p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid #d8e8d8;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.chat-input:focus {
+  border-color: #52b788;
+}
+
+.btn-chat {
+  background: #2d6a4f;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.btn-chat:hover { background: #1b4332; }
+.btn-chat:disabled { background: #95c4a8; }
+
+/* ACTION BUTTONS */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.action-buttons .btn-secondary,
+.action-buttons .btn-primary {
+  flex: 1;
+}
+
+/* AUTH LINKS */
+.auth-links {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+}
+
+.link-text {
+  color: #2d6a4f;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}

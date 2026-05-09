@@ -1,0 +1,80 @@
+/* ===== FORM PAGE ===== */
+.form-page {
+  padding: 20px 0;
+}
+
+.form-page h2 {
+  color: #2d6a4f;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+/* ===== SECTION ===== */
+.section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.section h3 {
+  color: #52b788;
+  margin-bottom: 15px;
+  font-size: 1.05rem;
+}
+
+/* ===== GRID ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+/* ===== OCR UPLOAD ===== */
+.upload-section {
+  background: linear-gradient(135deg, #f0f7ee, #e8f5e9);
+  border: 2px dashed #52b788;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.upload-section h3 {
+  color: #2d6a4f;
+  margin-bottom: 8px;
+}
+
+.upload-subtitle {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.upload-btn {
+  display: inline-block;
+  background: #2d6a4f;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: background 0.2s;
+  width: auto !important;
+}
+
+.upload-btn:hover { background: #1b4332; }
+
+.ocr-success {
+  margin-top: 12px;
+  color: #2d6a4f;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+}

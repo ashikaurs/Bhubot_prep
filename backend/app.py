@@ -1,5 +1,8 @@
 import requests
 import base64
+from auth import auth_bp
+from database import soil_records_collection
+from chatbot import chatbot_bp
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -11,6 +14,13 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+
+
+####
+app.register_blueprint(auth_bp)
+app.register_blueprint(chatbot_bp)
+
+
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
@@ -191,20 +201,22 @@ def ocr():
         return jsonify({"error": "No image uploaded"}), 400
 
     image_file = request.files['image']
-    image_data = base64.b64encode(image_file.read()).decode('utf-8')
+    
+    # Check file extension
+    allowed_extensions = ['.jpg', '.jpeg', '.png']
+    filename = image_file.filename.lower()
+    if not any(filename.endswith(ext) for ext in allowed_extensions):
+        return jsonify({"error": "Invalid file type. Please upload JPG or PNG."}), 400
 
+    image_data = base64.b64encode(image_file.read()).decode('utf-8')
     print("Image size:", len(image_data))
 
-    # Detect image type
-    filename = image_file.filename.lower()
+    # Detect media type
     if filename.endswith('.png'):
         media_type = "image/png"
-    elif filename.endswith('.jpg') or filename.endswith('.jpeg'):
-        media_type = "image/jpeg"
     else:
         media_type = "image/jpeg"
 
-    # Use Groq vision to read soil card directly
     try:
         response = client.chat.completions.create(
             model="meta-llama/llama-4-scout-17b-16e-instruct",
@@ -220,11 +232,23 @@ def ocr():
                         },
                         {
                             "type": "text",
-                            "text": """You are reading an Indian government soil health card.
-Extract all soil parameters and return ONLY a JSON object.
-No explanation, no markdown, no extra text — ONLY the JSON.
+                            "text": """You are an expert at reading Indian government soil health cards.
 
-Return ONLY this exact JSON format:
+FIRST — carefully examine this image and determine:
+1. Is this actually a soil health card or soil test report?
+2. Does it contain soil parameter values like pH, Nitrogen, Phosphorus, Potassium etc?
+
+A valid soil health card will have:
+- Parameters like pH, N, P, K, Organic Carbon
+- Numerical values or Low/Medium/High ratings
+- Possibly farmer name, district, sample number
+- Government of India branding (optional)
+
+If this is NOT a soil health card (e.g. it's a random photo, selfie, 
+landscape, food, animal, document of another type etc.), respond with ONLY:
+{"error": "not_soil_card"}
+
+If this IS a soil health card, extract all parameters and respond with ONLY:
 {
     "ph": 6.5,
     "nitrogen": "Low",
@@ -240,11 +264,15 @@ Return ONLY this exact JSON format:
     "ec": 0.4
 }
 
-Rules:
+Rules for extraction:
 - ph, organic_carbon, ec must be numbers
-- nitrogen, phosphorus, potassium, sulphur, zinc, iron, manganese, copper, boron must be "Low", "Medium", or "High"
-- If value not found use defaults: ph=6.5, all nutrients="Medium", organic_carbon=0.5, ec=0.4
-- Return ONLY the JSON, absolutely nothing else"""
+- nitrogen, phosphorus, potassium, sulphur, zinc, iron, manganese, 
+  copper, boron must be "Low", "Medium", or "High"
+- If a parameter exists but value unclear, use "Medium" as default
+- If parameter completely missing, use defaults:
+  ph=6.5, all nutrients="Medium", organic_carbon=0.5, ec=0.4
+- Return ONLY the JSON, absolutely nothing else
+- No explanation, no markdown, no extra text"""
                         }
                     ]
                 }
@@ -258,17 +286,40 @@ Rules:
 
         raw = raw.replace("```json", "").replace("```", "").strip()
 
-        soil_params = json.loads(raw)
+        parsed = json.loads(raw)
+
+        # Check if Groq said it's not a soil card
+        if "error" in parsed and parsed["error"] == "not_soil_card":
+            return jsonify({
+                "success": False,
+                "not_soil_card": True,
+                "error": "This does not appear to be a soil health card."
+            }), 400
+
+        # Validate that required fields exist
+        required_fields = ["ph", "nitrogen", "phosphorus", "potassium"]
+        for field in required_fields:
+            if field not in parsed:
+                return jsonify({
+                    "success": False,
+                    "not_soil_card": True,
+                    "error": "Could not find soil parameters in this image."
+                }), 400
+
         return jsonify({
             "success": True,
-            "soil_params": soil_params
+            "soil_params": parsed
         })
+
+    except json.JSONDecodeError:
+        return jsonify({
+            "success": False,
+            "error": "Could not parse soil parameters from image."
+        }), 500
 
     except Exception as e:
         print("Vision error:", str(e))
         return jsonify({"error": str(e)}), 500
-
-
 
 
 #     ocr_result = ocr_response.json()
@@ -348,47 +399,47 @@ Rules:
 
 
 
-@app.route("/api/chatbot", methods=["POST"])
-def chatbot():
-    data = request.json
-    user_message = data.get("message", "")
-    chat_history = data.get("history", [])
-    farm_context = data.get("farm_context", {})
+# @app.route("/api/chatbot", methods=["POST"])
+# def chatbot():
+#     data = request.json
+#     user_message = data.get("message", "")
+#     chat_history = data.get("history", [])
+#     farm_context = data.get("farm_context", {})
 
-    context_str = ""
-    if farm_context:
-        context_str = f"""
-Current farm context:
-- Crop: {farm_context.get('crop', 'Not specified')}
-- Location: {farm_context.get('location', 'Not specified')}
-- Season: {farm_context.get('season', 'Not specified')}
-- Land Size: {farm_context.get('land_size', 'Not specified')}
-- Budget: {farm_context.get('budget', 'Not specified')}
-- Soil pH: {farm_context.get('ph', 'Not specified')}
-- Nitrogen: {farm_context.get('nitrogen', 'Not specified')}
-- Phosphorus: {farm_context.get('phosphorus', 'Not specified')}
-- Potassium: {farm_context.get('potassium', 'Not specified')}
-"""
+#     context_str = ""
+#     if farm_context:
+#         context_str = f"""
+# Current farm context:
+# - Crop: {farm_context.get('crop', 'Not specified')}
+# - Location: {farm_context.get('location', 'Not specified')}
+# - Season: {farm_context.get('season', 'Not specified')}
+# - Land Size: {farm_context.get('land_size', 'Not specified')}
+# - Budget: {farm_context.get('budget', 'Not specified')}
+# - Soil pH: {farm_context.get('ph', 'Not specified')}
+# - Nitrogen: {farm_context.get('nitrogen', 'Not specified')}
+# - Phosphorus: {farm_context.get('phosphorus', 'Not specified')}
+# - Potassium: {farm_context.get('potassium', 'Not specified')}
+# """
 
-    system_prompt = f"""You are BhuBot, a friendly and expert agricultural advisor for Indian farmers.
-Answer farming questions clearly and practically. Focus on Indian farming conditions, locally available products, and affordable solutions.
-Keep answers concise (3-5 sentences). Use simple language.
-{f"Use this farm context when relevant: {context_str}" if context_str else ""}
-If asked in another language, respond in that language."""
+#     system_prompt = f"""You are BhuBot, a friendly and expert agricultural advisor for Indian farmers.
+# Answer farming questions clearly and practically. Focus on Indian farming conditions, locally available products, and affordable solutions.
+# Keep answers concise (3-5 sentences). Use simple language.
+# {f"Use this farm context when relevant: {context_str}" if context_str else ""}
+# If asked in another language, respond in that language."""
 
-    messages = [{"role": "system", "content": system_prompt}]
-    for msg in chat_history[-6:]:  # keep last 6 messages for context
-        messages.append({"role": msg["role"], "content": msg["content"]})
-    messages.append({"role": "user", "content": user_message})
+#     messages = [{"role": "system", "content": system_prompt}]
+#     for msg in chat_history[-6:]:  # keep last 6 messages for context
+#         messages.append({"role": msg["role"], "content": msg["content"]})
+#     messages.append({"role": "user", "content": user_message})
 
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=messages,
-        max_tokens=400
-    )
+#     response = client.chat.completions.create(
+#         model="llama-3.3-70b-versatile",
+#         messages=messages,
+#         max_tokens=400
+#     )
 
-    reply = response.choices[0].message.content
-    return jsonify({"reply": reply})
+#     reply = response.choices[0].message.content
+#     return jsonify({"reply": reply})
 
 
 
