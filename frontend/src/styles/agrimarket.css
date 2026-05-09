@@ -1,0 +1,371 @@
+/* ===== AGRIMARKET PAGE ===== */
+.agrimarket-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+/* ===== LOADING ===== */
+.market-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f7ee;
+}
+
+.market-loading-inner {
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.loading-spinner {
+  font-size: 3rem;
+  animation: pulse 1s infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* ===== HEADER ===== */
+.market-header {
+  background: linear-gradient(135deg, #2d6a4f, #52b788);
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 20px;
+  color: white;
+  position: relative;
+}
+
+.btn-back {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  display: inline-block;
+}
+
+.btn-back:hover { background: rgba(255,255,255,0.3); }
+
+.market-header-content h1 {
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+
+.market-subtitle {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 5px;
+}
+
+.market-updated {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.mock-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  margin-top: 8px;
+}
+
+/* ===== SECTIONS ===== */
+.market-section {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.market-section h2 {
+  color: #2d6a4f;
+  margin-bottom: 5px;
+  font-size: 1.15rem;
+}
+
+.section-subtitle {
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.section-header h2 { margin-bottom: 0; }
+
+/* ===== TABLE ===== */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.price-table th {
+  background: #f0f7ee;
+  color: #2d6a4f;
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid #d8e8d8;
+}
+
+.price-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+.price-table tr:hover { background: #fafafa; }
+
+.best-row { background: #f0fff4 !important; }
+.best-row td { font-weight: 600; }
+
+.best-tag {
+  background: #52b788;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  margin-right: 6px;
+}
+
+.modal-price {
+  color: #2d6a4f;
+  font-weight: 700;
+}
+
+/* ===== BEST MARKET ===== */
+.best-market-card {
+  background: linear-gradient(135deg, #f0fff4, #e8f5e9);
+  border: 2px solid #52b788;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.best-market-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2d6a4f;
+  margin-bottom: 5px;
+}
+
+.best-market-price {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #52b788;
+  margin-bottom: 10px;
+}
+
+.best-market-reason {
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ===== CHART ===== */
+.chart-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.price-chart {
+  width: 100%;
+  max-width: 600px;
+  display: block;
+  margin: 0 auto;
+}
+
+.trend-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.trend-tab {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #d8e8d8;
+  background: white;
+  color: #666;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.trend-tab.active {
+  background: #2d6a4f;
+  color: white;
+  border-color: #2d6a4f;
+}
+
+.trend-summary {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.trend-up { color: #52b788; }
+.trend-down { color: #e63946; }
+
+/* ===== PROFIT ===== */
+.profit-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.profit-card {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profit-icon { font-size: 1.5rem; }
+
+.profit-label {
+  font-size: 0.8rem;
+  color: #888;
+  font-weight: 600;
+}
+
+.profit-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #2d6a4f;
+}
+
+.profit-sub {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+.profit-result {
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profit-positive {
+  background: linear-gradient(135deg, #2d6a4f, #52b788);
+  color: white;
+}
+
+.profit-negative {
+  background: linear-gradient(135deg, #e63946, #ff6b6b);
+  color: white;
+}
+
+.profit-result-label {
+  display: block;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 5px;
+}
+
+.profit-result-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.roi-label {
+  display: block;
+  font-size: 0.85rem;
+  opacity: 0.9;
+  text-align: right;
+}
+
+.roi-value {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+/* ===== INSIGHTS ===== */
+.insights-box {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.insight-line {
+  padding: 8px 0 8px 10px;
+  border-left: 3px solid #52b788;
+  margin-bottom: 10px;
+  color: #333;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* ===== ACTIONS ===== */
+.market-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.market-actions .btn-primary,
+.market-actions .btn-secondary {
+  flex: 1;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 600px) {
+  .profit-grid { grid-template-columns: repeat(2, 1fr); }
+  .section-header { flex-direction: column; align-items: flex-start; }
+  .trend-tabs { flex-wrap: wrap; }
+  .market-actions { flex-direction: column; }
+  .profit-result { flex-direction: column; gap: 10px; text-align: center; }
+  .roi-value, .roi-label { text-align: center; }
+}
+
+
+.btn-market {
+  background: linear-gradient(135deg, #f4a261, #e76f51);
+  color: white;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.btn-market:hover { opacity: 0.9; }

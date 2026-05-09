@@ -615,6 +615,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq import Groq
 from dotenv import load_dotenv
+from agrimarket import agrimarket_bp;
 
 import os
 
@@ -627,6 +628,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(chatbot_bp)
 app.register_blueprint(feedback_bp)
 app.register_blueprint(insights_bp)
+app.register_blueprint(agrimarket_bp)
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 

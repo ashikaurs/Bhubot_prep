@@ -6,8 +6,10 @@ import axios from 'axios';
 import Feedback from './pages/feedback';
 import './styles/feedback.css';
 import { getAdvice, uploadSoilCard, sendChatMessage, saveRecord, getInsights } from './utils/api';
+import AgriMarket from './pages/AgriMarket';
 
 
+import './styles/agrimarket.css';
 import './styles/global.css';
 import './styles/landing.css';
 import './styles/auth.css';
@@ -611,8 +613,21 @@ function FormPage() {
               ⭐ Give Feedback
             </button>
             <button className="btn-primary" onClick={() => navigate('/')}>🏠 Home</button>
+            <button
+              className="btn-market"
+              onClick={() => navigate('/agrimarket', {
+                state: {
+                  crop: formData.crop,
+                  location: formData.location,
+                  land_size: formData.land_size
+                }
+              })}
+            >
+              📈 View Market Prices & Profit Analysis
+            </button>
           </div>
         </div>
+        
       )}
     </div>
   );
@@ -643,6 +658,11 @@ function App() {
             <Feedback />
           </ProtectedRoute>
         } />
+        <Route path="/agrimarket" element={
+        <ProtectedRoute>
+          <AgriMarket />
+        </ProtectedRoute>
+      } />
       </Routes>
     </BrowserRouter>
   );

@@ -65,3 +65,6 @@ export const getFeedbackStats = () =>
 
 export const getInsights = (data) =>
     axios.post(`${BASE_URL}/api/insights`, data);
+
+export const getMarketData = (data) =>
+    axios.post(`${BASE_URL}/api/agrimarket`, data);
