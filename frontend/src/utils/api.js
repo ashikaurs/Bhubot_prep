@@ -61,3 +61,7 @@ export const getFeedbackStats = () =>
     axios.get(`${BASE_URL}/api/feedback/stats`, {
         headers: { Authorization: `Bearer ${getToken()}` }
     });
+
+
+export const getInsights = (data) =>
+    axios.post(`${BASE_URL}/api/insights`, data);

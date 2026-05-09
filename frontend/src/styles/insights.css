@@ -1,0 +1,142 @@
+/* ===== COMMUNITY INSIGHTS ===== */
+.insights-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.insights-card h3 {
+  color: #2d6a4f;
+  margin-bottom: 5px;
+  font-size: 1.1rem;
+}
+
+.insights-subtitle {
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+}
+
+.insights-empty {
+  color: #888;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.insights-loading {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  color: #52b788;
+  font-weight: 600;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* ===== INSIGHT ITEM ===== */
+.insight-item {
+  border: 1.5px solid #e8f5e9;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 15px;
+}
+
+.insight-item.strong { border-color: #52b788; }
+.insight-item.cautious { border-color: #f4a261; }
+.insight-item.avoid { border-color: #e63946; }
+
+.insight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.insight-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.insight-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.badge-strong {
+  background: #e8f5e9;
+  color: #2d6a4f;
+}
+
+.badge-cautious {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.badge-avoid {
+  background: #fff0f0;
+  color: #e63946;
+}
+
+/* ===== STATS ===== */
+.insight-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.insight-stat {
+  text-align: center;
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.stat-val {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #333;
+}
+
+.stat-lbl {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 3px;
+}
+
+/* ===== PROGRESS BAR ===== */
+.insight-bar-track {
+  background: #f0f0f0;
+  border-radius: 20px;
+  height: 10px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.insight-bar-fill {
+  height: 100%;
+  border-radius: 20px;
+  transition: width 1s ease-in-out;
+}
+
+.insight-confidence {
+  font-size: 0.82rem;
+  color: #888;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 600px) {
+  .insight-stats { grid-template-columns: repeat(2, 1fr); }
+  .insight-header { flex-direction: column; align-items: flex-start; }
+}

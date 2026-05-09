@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-route
 import axios from 'axios';
 import Feedback from './pages/feedback';
 import './styles/feedback.css';
-
+import { getAdvice, uploadSoilCard, sendChatMessage, saveRecord, getInsights } from './utils/api';
 
 
 import './styles/global.css';
@@ -13,12 +13,13 @@ import './styles/landing.css';
 import './styles/auth.css';
 import './styles/form.css';
 import './styles/advice.css';
+import './styles/insights.css';
 
 
 
 import Login from './pages/Login';
 import Register from './pages/Register';
-import { getAdvice, uploadSoilCard, sendChatMessage, saveRecord } from './utils/api';
+// import { getAdvice, uploadSoilCard, sendChatMessage, saveRecord } from './utils/api';
 
 // Protected route component
 function ProtectedRoute({ children }) {
@@ -28,6 +29,99 @@ function ProtectedRoute({ children }) {
   }
   return children;
 }
+
+
+
+
+
+
+
+
+function CommunityInsights({ insights, crop, hasData, message }) {
+  if (!hasData) {
+    return (
+      <div className="insights-card">
+        <h3>👥 Community Intelligence</h3>
+        <p className="insights-empty">{message}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="insights-card">
+      <h3>👥 Community Intelligence for {crop}</h3>
+      <p className="insights-subtitle">
+        Based on real farmer outcomes in our database
+      </p>
+
+      {insights.map((insight, index) => (
+        <div key={index} className={`insight-item ${insight.recommendation}`}>
+          <div className="insight-header">
+            <span className="insight-label">{insight.match_label}</span>
+            <span className={`insight-badge badge-${insight.recommendation}`}>
+              {insight.recommendation === 'strong' && '✅ Strongly Recommended'}
+              {insight.recommendation === 'cautious' && '⚠️ Proceed with Caution'}
+              {insight.recommendation === 'avoid' && '❌ Low Success Rate'}
+            </span>
+          </div>
+
+          <div className="insight-stats">
+            <div className="insight-stat">
+              <span className="stat-val">{insight.total_farmers}</span>
+              <span className="stat-lbl">Farmers Analyzed</span>
+            </div>
+            <div className="insight-stat">
+              <span className="stat-val" style={{ color: '#52b788' }}>
+                {insight.success_count}
+              </span>
+              <span className="stat-lbl">Succeeded</span>
+            </div>
+            <div className="insight-stat">
+              <span className="stat-val" style={{ color: '#e63946' }}>
+                {insight.failure_count}
+              </span>
+              <span className="stat-lbl">Failed</span>
+            </div>
+            <div className="insight-stat">
+              <span className="stat-val" style={{
+                color: insight.success_rate >= 70 ? '#52b788' :
+                       insight.success_rate >= 40 ? '#f4a261' : '#e63946'
+              }}>
+                {insight.success_rate}%
+              </span>
+              <span className="stat-lbl">Success Rate</span>
+            </div>
+          </div>
+
+          <div className="insight-bar-track">
+            <div
+              className="insight-bar-fill"
+              style={{
+                width: `${insight.success_rate}%`,
+                background: insight.success_rate >= 70 ? '#52b788' :
+                            insight.success_rate >= 40 ? '#f4a261' : '#e63946'
+              }}
+            ></div>
+          </div>
+
+          <p className="insight-confidence">
+            Confidence: <strong>{insight.confidence}</strong>
+            {insight.confidence === 'low' && ' — More farmer data needed'}
+            {insight.confidence === 'medium' && ' — Based on moderate data'}
+            {insight.confidence === 'high' && ' — Based on strong data'}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
+
+
+
+
+
 
 // Soil chart component
 function SoilChart({ soilParams }) {
@@ -186,6 +280,8 @@ function FormPage() {
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
   const [recordSaved, setRecordSaved] = useState(false);
+  const [insights, setInsights] = useState(null);
+  const [insightsLoading, setInsightsLoading] = useState(false);
 
   const handleFormChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
   const handleSoilChange = (e) => setSoilParams({ ...soilParams, [e.target.name]: e.target.value });
@@ -230,6 +326,28 @@ function FormPage() {
     //if (!formData.crop.trim()) { alert('Please enter your crop name!'); return; }
     if (!formData.land_size.trim()) { alert('Please enter your land size!'); return; }
     if (!formData.location.trim()) { alert('Please enter your location!'); return; }
+   
+   
+   
+   
+   
+          // Fetch community insights
+      setInsightsLoading(true);
+      try {
+        const insightsResponse = await getInsights({
+          crop: formData.crop,
+          season: formData.season,
+          location: formData.location,
+          soil_params: soilParams
+        });
+        setInsights(insightsResponse.data);
+      } catch (e) {
+        console.log('Insights fetch failed:', e);
+      }
+      setInsightsLoading(false);
+
+
+
 
 
 
@@ -390,6 +508,25 @@ function FormPage() {
 
           <SoilChart soilParams={soilParams} />
 
+
+          {insightsLoading && (
+  <div className="insights-loading">
+    👥 Loading community insights...
+  </div>
+)}
+
+{insights && (
+  <CommunityInsights
+    insights={insights.insights}
+    crop={insights.crop}
+    hasData={insights.has_data}
+    message={insights.message}
+  />
+)}
+
+
+
+
           {sensor && (
             <div className="sensor-card">
               <h3>📡 Live Sensor Readings</h3>
@@ -512,3 +649,5 @@ function App() {
 }
 
 export default App;
+
+
