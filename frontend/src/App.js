@@ -499,7 +499,11 @@ function App() {
         <Route path="/form" element={
           <ProtectedRoute>
             <FormPage />
-            <Feedback/>
+          </ProtectedRoute>
+        } />
+        <Route path="/feedback" element={
+          <ProtectedRoute>
+            <Feedback />
           </ProtectedRoute>
         } />
       </Routes>
