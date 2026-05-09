@@ -13,5 +13,6 @@ db = get_db()
 
 users_collection = db["users"]
 soil_records_collection = db["soil_records"]
+feedbacks_collection = db["feedbacks"]
 
 print("✅ MongoDB connected successfully!")

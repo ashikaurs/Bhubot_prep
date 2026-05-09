@@ -1,4 +1,5 @@
 import requests
+from feedback import feedback_bp
 import base64
 from auth import auth_bp
 from database import soil_records_collection
@@ -8,6 +9,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq import Groq
 from dotenv import load_dotenv
+
 import os
 
 
@@ -23,7 +25,7 @@ CORS(app)
 ####
 app.register_blueprint(auth_bp)
 app.register_blueprint(chatbot_bp)
-
+app.register_blueprint(feedback_bp)
 
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
@@ -35,157 +37,6 @@ mock_sensor = {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# @app.route("/api/chat", methods=["POST"])
-# def chat():
-#     data = request.json
-#     crop = data.get("crop", "").strip()
-#     crop_instruction = data.get("cropInstruction", "")
-    
-#     print("Received data:", data)
-
-#     soil_params = data.get("soil_params", {})
-#     #crop = data.get("crop", "rice")
-#     language = data.get("language", "English")
-#     budget = data.get("budget", "medium")
-#     land_size = data.get("land_size", "1 acre")
-
-    # shared context for both calls
-    #context = f"""
-# {crop_instruction}
-# Season: {data.get('season', 'Kharif')}
-# Location: {data.get('location', 'Karnataka, India')}
-# Land Size: {land_size}
-# Budget: {budget}
-# pH: {soil_params.get('ph', 6.5)}
-# N: {soil_params.get('nitrogen', 'Medium')}
-# P: {soil_params.get('phosphorus', 'Medium')}
-# K: {soil_params.get('potassium', 'Medium')}
-# Organic Carbon: {soil_params.get('organic_carbon', 0.5)}%
-# EC: {soil_params.get('ec', 0.4)} dS/m
-# Zn({soil_params.get('zinc','Medium')}), Fe({soil_params.get('iron','Medium')}), 
-# Mn({soil_params.get('manganese','Medium')}), Cu({soil_params.get('copper','Medium')}), 
-# B({soil_params.get('boron','Medium')}), S({soil_params.get('sulphur','Medium')})
-# Moisture: {mock_sensor['moisture']}%
-# Temperature: {mock_sensor['temperature']}°C
-# """
-
-#     prompt_part1 = f"""
-# You are an expert agricultural advisor for Indian farmers.
-# Respond ONLY in {language}.
-# Complete every sentence fully. Never cut off midway.
-
-# SOIL DATA:
-# {context}
-
-# Generate ONLY these sections (Part 1 of 2):
-
-# 📊 **Soil Health Score: [X]/100**
-# - pH ([value]): [X]/15 — [status]
-# - Nitrogen: [X]/20 — [status]
-# - Phosphorus: [X]/15 — [status]
-# - Potassium: [X]/15 — [status]
-# - Organic Carbon: [X]/15 — [status]
-# - Micronutrients: [X]/20 — [status]
-# - 🎯 Main Limiting Factor: **[problem]**
-# - ⚠️ If not fixed: [consequence for {crop_instruction}]
-
-# 🧪 **Soil Analysis for {crop_instruction}**
-# - pH: [impact on {crop_instruction}]
-# - N/P/K: [growth impact]
-# - Organic Carbon: [soil health impact]
-# - EC: [salinity risk]
-# - Estimated soil type (approximation): [type] — confirm with texture test
-# - Moisture {mock_sensor['moisture']}%: [status]
-
-# 🔴 **High Priority Actions**
-# - [urgent action] ⚠️ If not addressed: [yield loss]
-# - [second action] ⚠️ If not addressed: [consequence]
-
-# 🟡 **Medium Priority Actions**
-# - [action + timing] ✅/⚠️
-# - [action] ✅/⚠️
-
-# 🟢 **Low Priority Actions**
-# - [improvement] ✅
-# - [improvement] ✅
-
-# 🌿 **Fertilizer Plan for {crop}**
-# - Approach: [Organic/Chemical/Combination] — [reason]
-# Organic:
-# - [product]: **[quantity]** per acre — [timing] ✅/⚠️
-# - [product]: **[quantity]** per acre — [timing] ✅/⚠️
-# Chemical (if needed):
-# - [product]: **[quantity]** per acre — [timing] ✅/⚠️/❌
-# Micronutrients:
-# - [nutrient]: **[Indian product]** — **[dose]** — [soil/foliar] — [timing] ✅
-# Nutrient Interaction:
-# - [N-P-K interaction note for {crop}]
-
-# Keep response between 250-350 words. Complete every sentence fully in {language}.
-# """
-
-#     prompt_part2 = f"""
-# You are an expert agricultural advisor for Indian farmers.
-# Respond ONLY in {language}.
-# Complete every sentence fully. Never cut off midway.
-
-# SOIL DATA:
-# {context}
-
-# Generate ONLY these sections (Part 2 of 2):
-
-# 💧 **Irrigation Plan for {crop}**
-# - Estimated soil type (approximation): [type] — [drainage note]
-# - Current moisture **{mock_sensor['moisture']}%**: [Deficit/Optimal/Surplus]
-# - Recommended method: [standing water cm for rice / mm per week for others]
-# Stage-wise:
-# - Land preparation: [advice]
-# - Germination/Transplanting: [water requirement]
-# - Vegetative growth: [water requirement]
-# - Flowering/Heading: [critical stage advice]
-# - Maturity: [reduce water advice]
-# - ⚠️ Water stress warning: [risk for {crop}]
-
-# 💰 **Cost Estimate per Acre**
-# - Seeds: ₹[range]
-# - Organic inputs: ₹[range]
-# - Chemical fertilizers: ₹[range]
-# - Micronutrients: ₹[range]
-# - Irrigation: ₹[range]
-# - Labor: ₹[range]
-# - **Total: ₹[range]**
-# - Expected yield improvement: **[X–Y]%**
-# - Estimated return: ₹[range] investment → ₹[range] additional income
-
-# 💡 **Practical Tips for {crop} in {data.get('location','your region')}**
-# - [low cost local tip] ✅
-# - [locally available practice] ✅
-# - [common mistake warning] ⚠️
-# - [do THIS WEEK] ✅
-
-# 📅 **Week-by-Week Action Plan**
-# - **Week 1–2:** [urgent steps before/at sowing]
-# - **Week 3–4:** [early growth actions]
-# - **Week 5–8:** [vegetative stage actions]
-# - **At Harvest:** [soil care + next season prep]
-
-# Keep response between 250-350 words. Complete every sentence fully in {language}.
-# """
 
 
 

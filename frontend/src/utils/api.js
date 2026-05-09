@@ -43,3 +43,21 @@ export const saveRecord = (data) =>
     axios.post(`${BASE_URL}/api/save-record`, data, {
         headers: { Authorization: `Bearer ${getToken()}` }
     });
+
+
+
+
+export const submitFeedback = (data) =>
+    axios.post(`${BASE_URL}/api/feedback`, data, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+    });
+
+export const getMyFeedback = () =>
+    axios.get(`${BASE_URL}/api/feedback/my`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+    });
+
+export const getFeedbackStats = () =>
+    axios.get(`${BASE_URL}/api/feedback/stats`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+    });
