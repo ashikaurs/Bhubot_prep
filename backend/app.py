@@ -10,6 +10,10 @@ from groq import Groq
 from dotenv import load_dotenv
 import os
 
+
+
+
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -31,44 +35,201 @@ mock_sensor = {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# @app.route("/api/chat", methods=["POST"])
+# def chat():
+#     data = request.json
+#     crop = data.get("crop", "").strip()
+#     crop_instruction = data.get("cropInstruction", "")
+    
+#     print("Received data:", data)
+
+#     soil_params = data.get("soil_params", {})
+#     #crop = data.get("crop", "rice")
+#     language = data.get("language", "English")
+#     budget = data.get("budget", "medium")
+#     land_size = data.get("land_size", "1 acre")
+
+    # shared context for both calls
+    #context = f"""
+# {crop_instruction}
+# Season: {data.get('season', 'Kharif')}
+# Location: {data.get('location', 'Karnataka, India')}
+# Land Size: {land_size}
+# Budget: {budget}
+# pH: {soil_params.get('ph', 6.5)}
+# N: {soil_params.get('nitrogen', 'Medium')}
+# P: {soil_params.get('phosphorus', 'Medium')}
+# K: {soil_params.get('potassium', 'Medium')}
+# Organic Carbon: {soil_params.get('organic_carbon', 0.5)}%
+# EC: {soil_params.get('ec', 0.4)} dS/m
+# Zn({soil_params.get('zinc','Medium')}), Fe({soil_params.get('iron','Medium')}), 
+# Mn({soil_params.get('manganese','Medium')}), Cu({soil_params.get('copper','Medium')}), 
+# B({soil_params.get('boron','Medium')}), S({soil_params.get('sulphur','Medium')})
+# Moisture: {mock_sensor['moisture']}%
+# Temperature: {mock_sensor['temperature']}°C
+# """
+
+#     prompt_part1 = f"""
+# You are an expert agricultural advisor for Indian farmers.
+# Respond ONLY in {language}.
+# Complete every sentence fully. Never cut off midway.
+
+# SOIL DATA:
+# {context}
+
+# Generate ONLY these sections (Part 1 of 2):
+
+# 📊 **Soil Health Score: [X]/100**
+# - pH ([value]): [X]/15 — [status]
+# - Nitrogen: [X]/20 — [status]
+# - Phosphorus: [X]/15 — [status]
+# - Potassium: [X]/15 — [status]
+# - Organic Carbon: [X]/15 — [status]
+# - Micronutrients: [X]/20 — [status]
+# - 🎯 Main Limiting Factor: **[problem]**
+# - ⚠️ If not fixed: [consequence for {crop_instruction}]
+
+# 🧪 **Soil Analysis for {crop_instruction}**
+# - pH: [impact on {crop_instruction}]
+# - N/P/K: [growth impact]
+# - Organic Carbon: [soil health impact]
+# - EC: [salinity risk]
+# - Estimated soil type (approximation): [type] — confirm with texture test
+# - Moisture {mock_sensor['moisture']}%: [status]
+
+# 🔴 **High Priority Actions**
+# - [urgent action] ⚠️ If not addressed: [yield loss]
+# - [second action] ⚠️ If not addressed: [consequence]
+
+# 🟡 **Medium Priority Actions**
+# - [action + timing] ✅/⚠️
+# - [action] ✅/⚠️
+
+# 🟢 **Low Priority Actions**
+# - [improvement] ✅
+# - [improvement] ✅
+
+# 🌿 **Fertilizer Plan for {crop}**
+# - Approach: [Organic/Chemical/Combination] — [reason]
+# Organic:
+# - [product]: **[quantity]** per acre — [timing] ✅/⚠️
+# - [product]: **[quantity]** per acre — [timing] ✅/⚠️
+# Chemical (if needed):
+# - [product]: **[quantity]** per acre — [timing] ✅/⚠️/❌
+# Micronutrients:
+# - [nutrient]: **[Indian product]** — **[dose]** — [soil/foliar] — [timing] ✅
+# Nutrient Interaction:
+# - [N-P-K interaction note for {crop}]
+
+# Keep response between 250-350 words. Complete every sentence fully in {language}.
+# """
+
+#     prompt_part2 = f"""
+# You are an expert agricultural advisor for Indian farmers.
+# Respond ONLY in {language}.
+# Complete every sentence fully. Never cut off midway.
+
+# SOIL DATA:
+# {context}
+
+# Generate ONLY these sections (Part 2 of 2):
+
+# 💧 **Irrigation Plan for {crop}**
+# - Estimated soil type (approximation): [type] — [drainage note]
+# - Current moisture **{mock_sensor['moisture']}%**: [Deficit/Optimal/Surplus]
+# - Recommended method: [standing water cm for rice / mm per week for others]
+# Stage-wise:
+# - Land preparation: [advice]
+# - Germination/Transplanting: [water requirement]
+# - Vegetative growth: [water requirement]
+# - Flowering/Heading: [critical stage advice]
+# - Maturity: [reduce water advice]
+# - ⚠️ Water stress warning: [risk for {crop}]
+
+# 💰 **Cost Estimate per Acre**
+# - Seeds: ₹[range]
+# - Organic inputs: ₹[range]
+# - Chemical fertilizers: ₹[range]
+# - Micronutrients: ₹[range]
+# - Irrigation: ₹[range]
+# - Labor: ₹[range]
+# - **Total: ₹[range]**
+# - Expected yield improvement: **[X–Y]%**
+# - Estimated return: ₹[range] investment → ₹[range] additional income
+
+# 💡 **Practical Tips for {crop} in {data.get('location','your region')}**
+# - [low cost local tip] ✅
+# - [locally available practice] ✅
+# - [common mistake warning] ⚠️
+# - [do THIS WEEK] ✅
+
+# 📅 **Week-by-Week Action Plan**
+# - **Week 1–2:** [urgent steps before/at sowing]
+# - **Week 3–4:** [early growth actions]
+# - **Week 5–8:** [vegetative stage actions]
+# - **At Harvest:** [soil care + next season prep]
+
+# Keep response between 250-350 words. Complete every sentence fully in {language}.
+# """
+
+
+
 @app.route("/api/chat", methods=["POST"])
 def chat():
     data = request.json
+    crop = data.get("crop", "").strip()
+    crop_instruction = data.get("cropInstruction", "")
+    
     print("Received data:", data)
 
     soil_params = data.get("soil_params", {})
-    crop = data.get("crop", "rice")
     language = data.get("language", "English")
     budget = data.get("budget", "medium")
     land_size = data.get("land_size", "1 acre")
 
-    # shared context for both calls
     context = f"""
-Crop: {crop}
-Season: {data.get('season', 'Kharif')}
-Location: {data.get('location', 'Karnataka, India')}
-Land Size: {land_size}
-Budget: {budget}
-pH: {soil_params.get('ph', 6.5)}
-N: {soil_params.get('nitrogen', 'Medium')}
-P: {soil_params.get('phosphorus', 'Medium')}
-K: {soil_params.get('potassium', 'Medium')}
-Organic Carbon: {soil_params.get('organic_carbon', 0.5)}%
-EC: {soil_params.get('ec', 0.4)} dS/m
-Zn({soil_params.get('zinc','Medium')}), Fe({soil_params.get('iron','Medium')}), 
-Mn({soil_params.get('manganese','Medium')}), Cu({soil_params.get('copper','Medium')}), 
-B({soil_params.get('boron','Medium')}), S({soil_params.get('sulphur','Medium')})
-Moisture: {mock_sensor['moisture']}%
-Temperature: {mock_sensor['temperature']}°C
-"""
+    Season: {data.get('season', 'Kharif')}
+    Location: {data.get('location', 'Karnataka, India')}
+    Land Size: {land_size}
+    Budget: {budget}
+    pH: {soil_params.get('ph', 6.5)}
+    N: {soil_params.get('nitrogen', 'Medium')}
+    P: {soil_params.get('phosphorus', 'Medium')}
+    K: {soil_params.get('potassium', 'Medium')}
+    Organic Carbon: {soil_params.get('organic_carbon', 0.5)}%
+    EC: {soil_params.get('ec', 0.4)} dS/m
+    Zn({soil_params.get('zinc','Medium')}), Fe({soil_params.get('iron','Medium')}), 
+    Mn({soil_params.get('manganese','Medium')}), Cu({soil_params.get('copper','Medium')}), 
+    B({soil_params.get('boron','Medium')}), S({soil_params.get('sulphur','Medium')})
+    Moisture: {mock_sensor['moisture']}%
+    Temperature: {mock_sensor['temperature']}°C
+    """
+    
 
-    prompt_part1 = f"""
-You are an expert agricultural advisor for Indian farmers.
+    if crop:
+        prompt_part1 = f"""
+            You are an expert agricultural advisor for Indian farmers.
 Respond ONLY in {language}.
 Complete every sentence fully. Never cut off midway.
 
 SOIL DATA:
 {context}
+Crop: {crop_instruction}
 
 Generate ONLY these sections (Part 1 of 2):
 
@@ -80,10 +241,10 @@ Generate ONLY these sections (Part 1 of 2):
 - Organic Carbon: [X]/15 — [status]
 - Micronutrients: [X]/20 — [status]
 - 🎯 Main Limiting Factor: **[problem]**
-- ⚠️ If not fixed: [consequence for {crop}]
+- ⚠️ If not fixed: [consequence for {crop_instruction}]
 
-🧪 **Soil Analysis for {crop}**
-- pH: [impact on {crop}]
+🧪 **Soil Analysis for {crop_instruction}**
+- pH: [impact on {crop_instruction}]
 - N/P/K: [growth impact]
 - Organic Carbon: [soil health impact]
 - EC: [salinity risk]
@@ -115,15 +276,15 @@ Nutrient Interaction:
 - [N-P-K interaction note for {crop}]
 
 Keep response between 250-350 words. Complete every sentence fully in {language}.
-"""
-
-    prompt_part2 = f"""
-You are an expert agricultural advisor for Indian farmers.
+    """  # crop prompt part 1
+        prompt_part2 = f"""
+        You are an expert agricultural advisor for Indian farmers.
 Respond ONLY in {language}.
 Complete every sentence fully. Never cut off midway.
 
 SOIL DATA:
 {context}
+Crop: {crop_instruction}
 
 Generate ONLY these sections (Part 2 of 2):
 
@@ -163,7 +324,119 @@ Stage-wise:
 - **At Harvest:** [soil care + next season prep]
 
 Keep response between 250-350 words. Complete every sentence fully in {language}.
-"""
+
+        """  # crop prompt part 2
+    else:
+        prompt_part1 = f"""
+            You are an expert agricultural advisor for Indian farmers.
+Respond ONLY in {language}.
+Complete every sentence fully. Never cut off midway.
+
+SOIL DATA:
+{context}
+
+No specific crop has been selected. Analyze the soil and provide general recommendations.
+
+Generate ONLY these sections (Part 1 of 2):
+
+📊 **Soil Health Score: [X]/100**
+- pH ([value]): [X]/15 — [status]
+- Nitrogen: [X]/20 — [status]
+- Phosphorus: [X]/15 — [status]
+- Potassium: [X]/15 — [status]
+- Organic Carbon: [X]/15 — [status]
+- Micronutrients: [X]/20 — [status]
+- 🎯 Main Limiting Factor: **[problem]**
+- ⚠️ If not fixed: [consequence for overall soil productivity]
+
+🧪 **General Soil Analysis**
+- pH: [suitability for common crops in the region]
+- N/P/K: [overall fertility status]
+- Organic Carbon: [soil health impact]
+- EC: [salinity risk]
+- Estimated soil type (approximation): [type] — confirm with texture test
+- Moisture {mock_sensor['moisture']}%: [status]
+
+🌾 **Top 3 Recommended Crops for This Soil**
+- **[Crop 1]**: [why it suits this soil] ✅
+- **[Crop 2]**: [why it suits this soil] ✅
+- **[Crop 3]**: [why it suits this soil] ✅
+
+🔴 **High Priority Actions**
+- [urgent soil correction] ⚠️ If not addressed: [impact on any crop]
+- [second action] ⚠️ If not addressed: [consequence]
+
+🟡 **Medium Priority Actions**
+- [action + timing] ✅/⚠️
+- [action] ✅/⚠️
+
+🟢 **Low Priority Actions**
+- [improvement] ✅
+- [improvement] ✅
+
+🌿 **General Fertilizer Recommendations**
+- Approach: [Organic/Chemical/Combination] — [reason based on soil]
+Organic:
+- [product]: **[quantity]** per acre — [timing] ✅/⚠️
+- [product]: **[quantity]** per acre — [timing] ✅/⚠️
+Chemical (if needed):
+- [product]: **[quantity]** per acre — [timing] ✅/⚠️/❌
+Micronutrients:
+- [nutrient]: **[Indian product]** — **[dose]** — [soil/foliar] — [timing] ✅
+
+Keep response between 250-350 words. Complete every sentence fully in {language}.
+
+        """  # no-crop prompt part 1
+        prompt_part2 = f"""
+            You are an expert agricultural advisor for Indian farmers.
+Respond ONLY in {language}.
+Complete every sentence fully. Never cut off midway.
+
+SOIL DATA:
+{context}
+
+No specific crop has been selected. Provide general guidance suitable for this soil.
+
+Generate ONLY these sections (Part 2 of 2):
+
+💧 **General Irrigation Guidance**
+- Estimated soil type (approximation): [type] — [drainage note]
+- Current moisture **{mock_sensor['moisture']}%**: [Deficit/Optimal/Surplus]
+- Recommended method: [drip/flood/sprinkler based on soil type]
+- General water need: [low/medium/high water-demand crops suited here]
+- ⚠️ Drainage warning (if any): [waterlogging or drought risk based on soil]
+
+💰 **Estimated Soil Improvement Cost per Acre**
+- Organic inputs: ₹[range]
+- Chemical fertilizers: ₹[range]
+- Micronutrients: ₹[range]
+- Irrigation setup: ₹[range]
+- Labor: ₹[range]
+- **Total investment to improve soil: ₹[range]**
+- Expected productivity improvement after correction: **[X–Y]%**
+
+💡 **Practical Tips for {data.get('location','your region')} Farmers**
+- [low cost local soil improvement tip] ✅
+- [locally available organic practice] ✅
+- [common mistake warning] ⚠️
+- [do THIS WEEK to prepare soil] ✅
+
+📅 **Soil Preparation Action Plan**
+- **Week 1–2:** [immediate soil correction steps]
+- **Week 3–4:** [organic matter addition / tillage]
+- **Week 5–6:** [nutrient application before sowing]
+- **Before Sowing:** [final soil readiness checklist]
+
+Keep response between 250-350 words. Complete every sentence fully in {language}.
+
+        """  # no-crop prompt part 2
+
+   
+
+
+
+
+
 
     # make two separate API calls
     response1 = client.chat.completions.create(

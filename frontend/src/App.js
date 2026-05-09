@@ -911,9 +911,26 @@ function FormPage() {
   };
 
   const handleGetAdvice = async () => {
-    if (!formData.crop.trim()) { alert('Please enter your crop name!'); return; }
+    //if (!formData.crop.trim()) { alert('Please enter your crop name!'); return; }
     if (!formData.land_size.trim()) { alert('Please enter your land size!'); return; }
     if (!formData.location.trim()) { alert('Please enter your location!'); return; }
+
+
+
+    let finalCrop = formData.crop?.trim();
+
+    let cropInstruction = "";
+    if (!finalCrop) {
+      cropInstruction = `
+      Crop is not provided.
+      Based on the location (${formData.location}) and season (${formData.season}),
+      suggest the most suitable crops for the farmer.
+      `;
+    } else {
+      cropInstruction = `Crop: ${finalCrop}`;
+    }
+
+
 
     setLoading(true);
     try {
@@ -1027,7 +1044,7 @@ function FormPage() {
           <div className="section">
             <h3>Farm Details</h3>
             <div className="grid">
-              <label className="required">Crop<input name="crop" placeholder="e.g. Rice, Wheat" value={formData.crop} onChange={handleFormChange} /></label>
+              <label>Crop<input name="crop" placeholder="e.g. Rice, Wheat" value={formData.crop} onChange={handleFormChange} /></label>
               <label className="required">Land Size<input name="land_size" placeholder="e.g. 2 acres" value={formData.land_size} onChange={handleFormChange} /></label>
               <label>Budget<select name="budget" value={formData.budget} onChange={handleFormChange}><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></label>
               <label>Language<select name="language" value={formData.language} onChange={handleFormChange}><option>English</option><option>Kannada</option><option>Hindi</option><option>Telugu</option><option>Tamil</option></select></label>
@@ -1129,6 +1146,13 @@ function FormPage() {
     </div>
   );
 }
+
+
+
+
+
+
+
 
 // Main App with routing
 function App() {
